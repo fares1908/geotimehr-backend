@@ -5,23 +5,19 @@
 
 require('dotenv').config();
 
-const mongoose = require('mongoose');
 const app = require('./app');
+const connectDB = require('./config/db');
+const { port } = require('./config/env');
 
-const PORT = process.env.PORT || 3000;
+const start = async () => {
+  await connectDB();
 
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log(' MongoDB connected');
-    app.listen(PORT, () => {
-      console.log(` GeoTime HR API running on port ${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error(' MongoDB connection error:', err.message);
-    process.exit(1);
+  app.listen(port, () => {
+    console.log(`🚀 GeoTime HR API running on port ${port}`);
   });
+};
+
+start();
 
 // Graceful shutdown on unhandled promise rejections
 process.on('unhandledRejection', (reason) => {
