@@ -22,9 +22,9 @@ const USER_STATUS = Object.freeze({
   ON_LEAVE: "ON_LEAVE",
 });
 
-/** @type {Readonly<{HQ: "HQ", WAREHOUSE: "WAREHOUSE", BRANCH: "BRANCH", LAB: "LAB", EVENT: "EVENT", REMOTE: "REMOTE"}>} */
+/** @type {Readonly<{HQ: "HQ", WAREHOUSE: "WAREHOUSE", BRANCH: "BRANCH", LAB: "LAB", OnSite: "OnSite", REMOTE: "REMOTE"}>} */
 const LOCATION_TYPES = Object.freeze({
-  HQ: "HQ",
+  OnSite: "OnSite",
   WAREHOUSE: "WAREHOUSE",
   BRANCH: "BRANCH",
   LAB: "LAB",
