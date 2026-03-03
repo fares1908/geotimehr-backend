@@ -11,7 +11,7 @@
       "description": "Local Development Server"
     },
     {
-      "url": "https://geotimehr-api.onrender.com/api",
+      "url": "https://geotimehr-backend.onrender.com/api",
       "description": "Production Server"
     }
   ],
