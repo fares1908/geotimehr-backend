@@ -1,0 +1,85 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "GeoTime HR API",
+    "description": "API for GeoTime HR Attendance System",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Local Development Server"
+    },
+    {
+      "url": "https://geotimehr-api.onrender.com/api",
+      "description": "Production Server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/auth/register-org": {
+      "post": {
+        "summary": "Register a new organization",
+        "tags": ["Auth"],
+        "security": [],
+        "responses": {
+          "201": { "description": "Organization created" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login to the system",
+        "tags": ["Auth"],
+        "security": [],
+        "responses": {
+          "200": { "description": "Successful login" },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Get my profile",
+        "tags": ["Auth"],
+        "responses": {
+          "200": { "description": "Returns my profile" }
+        }
+      }
+    },
+    "/attendance/checkin": {
+      "post": {
+        "summary": "Check-in",
+        "tags": ["Attendance"],
+        "responses": {
+          "200": { "description": "Checked in successfully" },
+          "403": { "description": "Outside geofence" },
+          "409": { "description": "Already checked in" }
+        }
+      }
+    },
+    "/attendance/checkout": {
+      "post": {
+        "summary": "Check-out",
+        "tags": ["Attendance"],
+        "responses": {
+          "200": { "description": "Checked out successfully" },
+          "404": { "description": "No active session" }
+        }
+      }
+    }
+  }
+}

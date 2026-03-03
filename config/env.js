@@ -20,7 +20,7 @@ const missing = REQUIRED.filter((key) => !env[key] || env[key].trim() === "");
 
 if (missing.length > 0) {
   throw new Error(
-    `❌ Missing required environment variable(s): ${missing.join(", ")}.\n` +
+    ` Missing required environment variable(s): ${missing.join(", ")}.\n` +
       "   Copy .env.example → .env and fill in the values before starting the server."
   );
 }

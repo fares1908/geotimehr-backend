@@ -13,7 +13,7 @@ const start = async () => {
   await connectDB();
 
   app.listen(port, () => {
-    console.log(`🚀 GeoTime HR API running on port ${port}`);
+    console.log(` GeoTime HR API running on port ${port}`);
   });
 };
 

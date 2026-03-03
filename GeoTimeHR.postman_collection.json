@@ -1,0 +1,1346 @@
+{
+  "info": {
+    "_postman_id": "a918a5fd-0a2f-41ba-b2dd-35754f738e6e",
+    "name": "GeoTime HR API",
+    "description": "Complete API for GeoTime HR Attendance System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Register Org",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201\", () => pm.response.to.have.status(201))",
+                  "const json = pm.response.json()",
+                  "pm.collectionVariables.set(\"token\", json.data.token)",
+                  "pm.collectionVariables.set(\"orgId\", json.data.org._id)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orgName\": \"Acme Corp\",\n  \"timezone\": \"Africa/Cairo\",\n  \"adminName\": \"Ahmed Admin\",\n  \"email\": \"admin@acme.com\",\n  \"password\": \"Admin1234!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register-org",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register-org"]
+            },
+            "description": "Registers a new organization and default HR admin user."
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200))",
+                  "const json = pm.response.json()",
+                  "pm.collectionVariables.set(\"token\", json.data.token)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@acme.com\",\n  \"password\": \"Admin1234!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Authenticates a user and issues a JWT token."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Me",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Fetches the current authenticated user's profile info."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📍 Locations",
+      "item": [
+        {
+          "name": "Create Location",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json()",
+                  "pm.collectionVariables.set(\"locationId\", json.data.location._id)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Headquarters\",\n  \"address\": \"123 Market St, Cairo\",\n  \"lat\": 30.0444,\n  \"lng\": 31.2357,\n  \"radiusMeters\": 200,\n  \"locationType\": \"HQ\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/locations",
+              "host": ["{{baseUrl}}"],
+              "path": ["locations"]
+            },
+            "description": "Creates a new geofenced location."
+          },
+          "response": []
+        },
+        {
+          "name": "List Locations",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/locations",
+              "host": ["{{baseUrl}}"],
+              "path": ["locations"]
+            },
+            "description": "Lists all geofenced locations."
+          },
+          "response": []
+        },
+        {
+          "name": "Toggle Location",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/locations/{{locationId}}/toggle",
+              "host": ["{{baseUrl}}"],
+              "path": ["locations", "{{locationId}}", "toggle"]
+            },
+            "description": "Toggles a location's active status."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Location",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/locations/{{locationId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["locations", "{{locationId}}"]
+            },
+            "description": "Deletes a specified location."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "⏰ Shifts",
+      "item": [
+        {
+          "name": "Create Shift",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json()",
+                  "pm.collectionVariables.set(\"shiftId\", json.data.shift._id)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Morning Shift\",\n  \"startTime\": \"09:00\",\n  \"endTime\": \"18:00\",\n  \"gracePeriodMins\": 15,\n  \"breakTimeMins\": 60\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/shifts",
+              "host": ["{{baseUrl}}"],
+              "path": ["shifts"]
+            },
+            "description": "Creates a new shift definition."
+          },
+          "response": []
+        },
+        {
+          "name": "List Shifts",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/shifts",
+              "host": ["{{baseUrl}}"],
+              "path": ["shifts"]
+            },
+            "description": "Lists all shift definitions."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "👥 Users",
+      "item": [
+        {
+          "name": "Create Employee",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json()",
+                  "pm.collectionVariables.set(\"userId\", json.data.user._id)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alex Rivera\",\n  \"email\": \"alex@acme.com\",\n  \"password\": \"Emp1234!\",\n  \"role\": \"EMPLOYEE\",\n  \"jobTitle\": \"Software Engineer\",\n  \"department\": \"Engineering\",\n  \"shiftId\": \"{{shiftId}}\",\n  \"locationId\": \"{{locationId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Creates a new employee."
+          },
+          "response": []
+        },
+        {
+          "name": "List Employees",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "ACTIVE"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Lists all employees with active status."
+          },
+          "response": []
+        },
+        {
+          "name": "List Employees - On Leave Filter",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "ON_LEAVE"
+                }
+              ]
+            },
+            "description": "Lists employees currently on leave."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Employee",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jobTitle\": \"Senior Engineer\",\n  \"department\": \"Backend\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}"]
+            },
+            "description": "Updates details of a specific employee."
+          },
+          "response": []
+        },
+        {
+          "name": "Soft Delete Employee",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}"]
+            },
+            "description": "Soft-deletes an employee's account."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🗓️ Attendance",
+      "item": [
+        {
+          "name": "Check In ✅ (inside geofence)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200))",
+                  "const json = pm.response.json()",
+                  "pm.collectionVariables.set(\"sessionId\", json.data.session._id)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lat\": 30.0444,\n  \"lng\": 31.2357,\n  \"workMode\": \"OFFICE\",\n  \"deviceInfo\": \"Android 14 / v1.0.0\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance/checkin",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance", "checkin"]
+            },
+            "description": "Checks an employee in safely inside their designated location."
+          },
+          "response": []
+        },
+        {
+          "name": "Check In ❌ (outside geofence)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 403\", () => pm.response.to.have.status(403))",
+                  "pm.test(\"Code OUTSIDE_GEOFENCE\", () => {\n  pm.expect(pm.response.json().code).to.equal(\"OUTSIDE_GEOFENCE\")\n})"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lat\": 25.2048,\n  \"lng\": 55.2708,\n  \"workMode\": \"OFFICE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance/checkin",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance", "checkin"]
+            },
+            "description": "Fails to check an employee in because they are outside geofence boundaries."
+          },
+          "response": []
+        },
+        {
+          "name": "Check Out",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lat\": 30.0444,\n  \"lng\": 31.2357,\n  \"deviceInfo\": \"Android 14 / v1.0.0\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance/checkout",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance", "checkout"]
+            },
+            "description": "Checks out an employee."
+          },
+          "response": []
+        },
+        {
+          "name": "Today Status",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/attendance/today",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance", "today"]
+            },
+            "description": "Retrieves an employee's attendance status for today."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📅 History",
+      "item": [
+        {
+          "name": "My History - All",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/history?filter=ALL&page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["history"],
+              "query": [
+                {
+                  "key": "filter",
+                  "value": "ALL"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Lists all personal attendance history."
+          },
+          "response": []
+        },
+        {
+          "name": "My History - Late Only",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/history?filter=LATE",
+              "host": ["{{baseUrl}}"],
+              "path": ["history"],
+              "query": [
+                {
+                  "key": "filter",
+                  "value": "LATE"
+                }
+              ]
+            },
+            "description": "Lists personal attendance history focusing on late check-ins."
+          },
+          "response": []
+        },
+        {
+          "name": "My History - Missing Out",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/history?filter=MISSING_OUT",
+              "host": ["{{baseUrl}}"],
+              "path": ["history"],
+              "query": [
+                {
+                  "key": "filter",
+                  "value": "MISSING_OUT"
+                }
+              ]
+            },
+            "description": "Lists personal attendance history emphasizing sessions where the user forgot to check out."
+          },
+          "response": []
+        },
+        {
+          "name": "Monthly Summary",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/history/monthly-summary?month=2025-10",
+              "host": ["{{baseUrl}}"],
+              "path": ["history", "monthly-summary"],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2025-10"
+                }
+              ]
+            },
+            "description": "Retrieves the user's monthly attendance summary."
+          },
+          "response": []
+        },
+        {
+          "name": "Employee History (HR)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/history/user/{{userId}}?month=2025-10",
+              "host": ["{{baseUrl}}"],
+              "path": ["history", "user", "{{userId}}"],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2025-10"
+                }
+              ]
+            },
+            "description": "Allows HR to view another employee's specific attendance."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📝 Requests",
+      "item": [
+        {
+          "name": "Submit Correction Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json()",
+                  "pm.collectionVariables.set(\"requestId\", json.data.request._id)"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"CORRECTION\",\n  \"targetSessionId\": \"{{sessionId}}\",\n  \"correctedCheckIn\": \"2025-10-10T08:30:00Z\",\n  \"correctedCheckOut\": \"2025-10-10T17:00:00Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/requests",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests"]
+            },
+            "description": "Submits a CORRECTION request for approval."
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Leave Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"LEAVE\",\n  \"leaveType\": \"SICK\",\n  \"leaveStartDate\": \"2025-10-24\",\n  \"leaveEndDate\": \"2025-10-26\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/requests",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests"]
+            },
+            "description": "Submits a LEAVE request for approval."
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Expense Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"EXPENSE\",\n  \"expenseDescription\": \"Office Supplies\",\n  \"expenseAmount\": 145.50,\n  \"expenseCurrency\": \"USD\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/requests",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests"]
+            },
+            "description": "Submits an EXPENSE request for approval."
+          },
+          "response": []
+        },
+        {
+          "name": "Submit Overtime Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"OVERTIME\",\n  \"overtimeDate\": \"2025-08-29\",\n  \"overtimeHours\": 4,\n  \"overtimeReason\": \"Product launch deadline preparation\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/requests",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests"]
+            },
+            "description": "Submits an OVERTIME request for approval."
+          },
+          "response": []
+        },
+        {
+          "name": "My Requests",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/requests",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests"]
+            },
+            "description": "Retrieves the list of currently authenticated user's requests."
+          },
+          "response": []
+        },
+        {
+          "name": "Pending Requests (HR)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/requests/admin/pending",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "admin", "pending"]
+            },
+            "description": "Gets all pending requests that HR officers need to review."
+          },
+          "response": []
+        },
+        {
+          "name": "Approve Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"APPROVED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/requests/{{requestId}}/review",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "{{requestId}}", "review"]
+            },
+            "description": "HR specific endpoint to approve any request type."
+          },
+          "response": []
+        },
+        {
+          "name": "Reject Request",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"REJECTED\",\n  \"rejectionReason\": \"Insufficient documentation provided\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/requests/{{requestId}}/review",
+              "host": ["{{baseUrl}}"],
+              "path": ["requests", "{{requestId}}", "review"]
+            },
+            "description": "HR specific endpoint to reject a request."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔔 Notifications",
+      "item": [
+        {
+          "name": "Get Notifications",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications"]
+            },
+            "description": "Fetches notifications specific to the authenticated user."
+          },
+          "response": []
+        },
+        {
+          "name": "Mark All Read",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/read-all",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "read-all"]
+            },
+            "description": "Marks all retrieved notifications as read to reset unread counters."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📊 Dashboard",
+      "item": [
+        {
+          "name": "Dashboard Stats",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Has presentNow\", () => {\n  pm.expect(pm.response.json().data).to.have.property(\"presentNow\")\n})"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "stats"]
+            },
+            "description": "Lists overall dashboard stats metrics with present and absent counts."
+          },
+          "response": []
+        },
+        {
+          "name": "Live Presence",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/live",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "live"]
+            },
+            "description": "Gets an actively updating feed of present members in real-time."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📈 Reports",
+      "item": [
+        {
+          "name": "Timesheet",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reports/timesheet?month=2025-10",
+              "host": ["{{baseUrl}}"],
+              "path": ["reports", "timesheet"],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2025-10"
+                }
+              ]
+            },
+            "description": "Returns a comprehensive monthly timesheet for employees."
+          },
+          "response": []
+        },
+        {
+          "name": "Export CSV",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reports/export-csv?month=2025-10",
+              "host": ["{{baseUrl}}"],
+              "path": ["reports", "export-csv"],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2025-10"
+                }
+              ]
+            },
+            "description": "Generates a downloadable CSV export representing monthly timesheets."
+          },
+          "response": []
+        },
+        {
+          "name": "Trends Chart",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reports/trends?month=2025-10",
+              "host": ["{{baseUrl}}"],
+              "path": ["reports", "trends"],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2025-10"
+                }
+              ]
+            },
+            "description": "Generates aggregated data trends for organization analytics."
+          },
+          "response": []
+        },
+        {
+          "name": "Late Report",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reports/late-report?month=2025-10",
+              "host": ["{{baseUrl}}"],
+              "path": ["reports", "late-report"],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "2025-10"
+                }
+              ]
+            },
+            "description": "Fetches comprehensive tardiness details about employees."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "orgId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "locationId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "shiftId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "sessionId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "requestId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

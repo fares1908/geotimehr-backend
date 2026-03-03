@@ -8,33 +8,39 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 
+const { clientUrl } = require('./config/env');
+const { generalLimiter } = require('./middleware/rateLimiter');
+const { notFound, errorHandler } = require('./middleware/errorHandler');
+
 const app = express();
 
 // ── Security & parsing middleware ──────────────────────────────
 app.use(helmet());
-app.use(cors({ origin: process.env.CLIENT_URL }));
+app.use(cors({ origin: clientUrl }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
+// ── Rate limiting (all /api/* routes) ─────────────────────────
+app.use('/api', generalLimiter);
+
+// ── Swagger API Documentation ─────────────────────────────────
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, {
+    customSiteTitle: 'GeoTime HR API Docs',
+    customCss: '.swagger-ui .topbar { background: #161b22 }',
+  })
+);
+
+
 // ── Routes ────────────────────────────────────────────────────
-app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
+app.use('/api', require('./routes'));
 
-// ── 404 handler ───────────────────────────────────────────────
-app.use((_req, res) => {
-  res.status(404).json({ success: false, message: 'Route not found' });
-});
-
-// ── Global error handler ──────────────────────────────────────
-// eslint-disable-next-line no-unused-vars
-app.use((err, _req, res, _next) => {
-  console.error('ERROR ', err);
-  const statusCode = err.statusCode || 500;
-  res.status(statusCode).json({
-    success: false,
-    message: err.message || 'Internal Server Error',
-  });
-});
+// ── 404 → Error handler (must be last) ────────────────────────
+app.use(notFound);
+app.use(errorHandler);
 
 module.exports = app;
