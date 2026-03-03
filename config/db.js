@@ -19,10 +19,7 @@ const { mongoUri } = require("./env");
  */
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(mongoUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    const conn = await mongoose.connect(process.env.MONGODB_URI);
 
     console.log(` MongoDB connected: ${conn.connection.host}`);
   } catch (error) {
